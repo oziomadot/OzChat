@@ -1,0 +1,22 @@
+NaijaStay Recommender
+User Onboarding & Registration Procedures
+Version 1.0 – March 10, 2026
+
+1. Process Overview
+User creates account via app/web → inputs profile → receives first recommendations.
+
+2. Step-by-Step
+Step 1: Email/Phone + OTP verification (Nigerian networks priority)
+Step 2: Basic info (name optional, age range, gender optional)
+Step 3: Preferences form (multi-select: budget slider ₦5k-₦500k+, location dropdown, tags: family, solo female, business, etc.)
+Step 4: Consent checkboxes (Privacy Policy link)
+Step 5: Welcome email with recommendations preview
+
+3. Error Handling
+Invalid OTP → retry limit 5
+Incomplete profile → prompt to continue later
+
+4. Software Integration
+Frontend: React Native / Next.js
+Backend: Node.js + PostgreSQL
+Auth: JWT + OAuth options

@@ -1,0 +1,56 @@
+# NaijaStay Recommender (NSR)  
+Booking and Payment Processing Procedures
+
+**Document Title:** Booking and Payment Processing Procedures  
+**Version:** 1.0  
+**Effective Date:** March 10, 2026  
+**Approved by:** CTO and Finance Lead, NSR  
+**Review Frequency:** Biannually or post-Paystack/regulatory changes  
+
+**Confidential – Internal Use Only**  
+**Page 1 of 6**
+
+## 1. Introduction
+### 1.1 Purpose
+This document outlines the end-to-end procedures for facilitating hotel bookings through NSR's platform, including payment collection via Paystack (Nigeria's leading payment gateway), fraud prevention, refund issuance, and chargeback management. It ensures secure, compliant, and efficient transactions while minimizing financial risks in Nigeria's high-fraud environment.
+
+### 1.2 Scope
+Covers user selection of recommended hotel → booking confirmation → payment → hotel confirmation → post-booking support. Applies to all NSR systems: frontend (React Native/Next.js), backend (Node.js), database (PostgreSQL), and Paystack integration.
+
+**Page 2 of 6**
+
+## 2. Booking Workflow Overview
+High-level steps for a typical booking:
+
+1. User views personalized hotel recommendations (via Recommendation Engine).  
+2. User selects hotel, dates, room type, and confirms preferences (age/gender/location/budget-aligned).  
+3. System calculates total amount (hotel rate + NSR service fee, in NGN).  
+4. User proceeds to payment → Paystack checkout.  
+5. On successful payment, booking is confirmed → hotel notified via API/email.  
+6. User receives confirmation (email/SMS/in-app).  
+7. Post-stay: Feedback collection; refunds if applicable.
+
+**Degraded Mode**: If Paystack is down, fallback to manual hotel contact + deferred payment.
+
+**Page 3 of 6**
+
+## 3. Paystack Integration Workflow
+NSR uses Paystack's standard 3-step payment flow (Initialize → Complete → Verify) for card, bank transfer, mobile money, etc.
+
+### 3.1 Step-by-Step Procedure
+1. **Initialize Transaction** (Backend):  
+   User clicks "Pay Now". Backend calls Paystack Initialize API.  
+   - Endpoint: POST /transaction/initialize  
+   - Payload: email, amount (in kobo, e.g., ₦50,000 = 5000000), reference (unique UUID), metadata (booking ID, hotel ID, user ID).  
+   - Response: authorization_url (redirect user here).  
+
+   Example Node.js snippet (using paystack-node or axios):
+   ```javascript
+   const paystack = require('paystack')(process.env.PAYSTACK_SECRET_KEY);
+   const response = await paystack.transaction.initialize({
+     email: user.email,
+     amount: totalAmountKobo,
+     reference: bookingReference,
+     metadata: { bookingId, hotelId, userId }
+   });
+   // Redirect user to response.data.authorization_url

@@ -1,0 +1,86 @@
+# NaijaStay Recommender (NSR)  
+Customer Service and Complaint Handling Policy
+
+**Document Title:** Customer Service and Complaint Handling Policy  
+**Version:** 1.0  
+**Effective Date:** March 10, 2026  
+**Approved by:** Head of Customer Experience and CEO, NSR  
+**Review Frequency:** Annually or post-major feedback trends  
+
+**Confidential – Internal Use Only**  
+**Page 1 of 5**
+
+## 1. Introduction
+### 1.1 Purpose
+This policy defines how NSR delivers excellent customer service and handles complaints for users seeking hotel recommendations and bookings in Nigeria. It ensures timely, empathetic, and fair responses, building trust while complying with Nigerian regulations (e.g., FCCPC consumer protection guidelines, NDPA 2023 for data-related complaints).
+
+### 1.2 Scope
+Applies to all user interactions via in-app chat, email (support@naijastay.com), WhatsApp Business (+234-XXX-XXXXXX), and any future channels. Covers pre-booking queries, recommendation issues, booking/payment problems, post-stay complaints, refunds, and data/privacy concerns.
+
+**Page 2 of 5**
+
+## 2. Service Channels
+NSR provides accessible, Nigeria-friendly channels considering mobile-first usage, data costs, and popular platforms:
+
+| Channel              | Availability                  | Primary Use Cases                          | Notes |
+|----------------------|-------------------------------|--------------------------------------------|-------|
+| In-App Chat         | 24/7 (AI-assisted + human handover) | Quick queries, real-time booking help     | Integrated with app; auto-escalates complex issues |
+| Email               | 24/7 submissions; business hours responses | Detailed complaints, attachments (e.g., receipts) | support@naijastay.com; auto-acknowledgment |
+| WhatsApp Business   | 24/7 (templates + human agents) | Instant chats, voice notes, media sharing | Nigerian-preferred; uses official API for multi-agent |
+| Phone (optional future) | Business hours (Lagos time) | Urgent escalations only                   | N/A currently |
+
+- **Auto-Responses & Chatbots**: Initial AI handles FAQs (e.g., "How to update preferences?") within seconds. Human handover for unresolved issues.
+- **Self-Service**: In-app FAQ, recommendation history, and booking status tracker to reduce ticket volume.
+
+**Page 3 of 5**
+
+## 3. Service Level Agreements (SLAs)
+SLAs are realistic, measurable, and tiered by severity (informed by Nigerian tech support norms and travel sector expectations):
+
+| Severity Level | Description                                      | First Response SLA | Target Resolution SLA | Examples |
+|----------------|--------------------------------------------------|--------------------|-----------------------|----------|
+| Critical      | Booking failure, payment deducted but no confirmation, data breach suspicion | 1 hour (during business hours); 4 hours off-hours | 4 hours              | Urgent refund needed, hotel overbooking |
+| High          | Wrong recommendation causing inconvenience, refund requests | 4 hours           | 24 hours             | Preference mismatch (e.g., family vs. solo) |
+| Medium        | General queries, minor app issues                | 12 hours          | 48 hours             | Update profile, amenity clarification |
+| Low           | Feedback, non-urgent suggestions                 | 24 hours          | 5 business days      | General app improvement ideas |
+
+- **Business Hours**: Mon–Fri 8 AM–8 PM WAT; weekends/holidays reduced staffing.
+- **Measurement**: Tracked via ticketing system (e.g., Zendesk/Intercom integration); monthly reports to leadership.
+- **Breach Handling**: If SLA missed, auto-apology + priority escalation; credits/refunds considered for repeated breaches.
+
+**Page 4 of 5**
+
+## 4. Escalation Matrix
+Structured escalation ensures issues reach appropriate levels quickly:
+
+| Level | Role/Team                     | When to Escalate                          | Response Time After Escalation | Contact/Notes |
+|-------|-------------------------------|-------------------------------------------|--------------------------------|---------------|
+| Level 1 | Customer Service Agent       | Initial handling; most queries resolved here | N/A                           | In-app/WhatsApp/email |
+| Level 2 | Senior Support Specialist    | Unresolved after 4–12 hours (per SLA) or high severity | Within 2 hours                | Assigned via ticket system |
+| Level 3 | Team Lead / Product Manager  | Complex issues (e.g., algorithm bias, payment gateway failures) or repeated complaints | Within 4 hours                | Involves engineering if needed |
+| Level 4 | Head of Customer Experience / CTO | Critical systemic issues, legal/privacy complaints, media/PR risk | Immediate (within 1 hour)     | CEO notified if reputational |
+| Level 5 | Executive (CEO)              | Extreme cases (mass complaints, regulatory involvement) | As required                   | Final decision-maker |
+
+- **Process**: Agent documents reason for escalation in ticket notes; notifies next level via @mention/Slack. Customer updated on status.
+- **Re-escalation**: If no progress in agreed time, auto-notify higher level.
+
+**Page 5 of 5**
+
+## 5. Complaint Documentation and Continuous Improvement
+- **Requirements**: All interactions logged in centralized ticketing system with:
+  - User ID, timestamp, channel, issue description, actions taken, resolution/outcome.
+  - Screenshots/voice notes (with consent per Data Privacy Policy).
+  - Root cause analysis for recurring issues.
+- **Feedback Loops**: Post-resolution surveys (NPS-style); monthly analysis of top complaints (e.g., recommendation accuracy, Northern vs. Southern hotel availability).
+- **Training**: Agents trained quarterly on empathy, cultural sensitivity (Nigeria's diversity), de-escalation, and product knowledge.
+- **Improvement**: Quarterly reviews; update policy based on trends, user feedback, and benchmarks (e.g., aim to improve First Contact Resolution >70%).
+
+**Revision History**  
+- v1.0 – Initial release – March 10, 2026  
+
+**Approval Signatures**  
+Head of Customer Experience: _______________________ Date: __________  
+CEO: ________________________ Date: __________
+
+**End of Document**  
+**Confidential – Internal Use Only**
