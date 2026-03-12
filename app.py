@@ -12,10 +12,24 @@ from datetime import datetime
 from rag_pipeline import RAGPipeline
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
-load_dotenv()
+from openai import OpenAI
 import os
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+
+load_dotenv()
+
+
+
+
+
+
+client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.environ.get("OPEN_ROUTER"))
+
+model="openrouter/free"
+
 
 app = Flask(__name__)
 CORS(app)
@@ -116,7 +130,7 @@ def format_humanistic_response(question, retrieved_chunks):
     Answer:
     """
     response = client.chat.completions.create(
-        model="gpt-4",
+        model=model,
         messages=[{"role":"user","content":prompt}],
         temperature=0
     )
@@ -231,6 +245,7 @@ def health():
         'version':'1.0.0'
     })
 
-if __name__=='__main__':
-    print("🚀 NaijaStay Recommender running on http://localhost:5000")
-    app.run(host='0.0.0.0',port=5000,debug=True)
+if __name__ == '__main__':
+    print("🚀 NaijaStay Recommender running...")
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)  # debug=False for production

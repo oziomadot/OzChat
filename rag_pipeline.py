@@ -8,9 +8,15 @@ from dotenv import load_dotenv
 from rank_bm25 import BM25Okapi
 from openai import OpenAI
 from sklearn.metrics.pairwise import cosine_similarity
+import os
 
 load_dotenv()
-client = OpenAI()  # Make sure OPENAI_API_KEY is set in your environment
+# client = OpenAI()  # Make sure OPENAI_API_KEY is set in your environment
+client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.environ.get("OPEN_ROUTER"))
+
+model="openrouter/free"
 
 @dataclass
 class RetrievedChunk:
@@ -21,7 +27,7 @@ class RetrievedChunk:
 
 class RAGPipeline:
     def __init__(self, vector_db_path="./nsr_vector_db", collection_name="nsr_policies",
-                 model_name="all-MiniLM-L6-v2", top_k=20, enable_reranking=True, use_ensemble=True):
+                model_name="all-MiniLM-L6-v2", top_k=20, enable_reranking=True, use_ensemble=True):
         self.vector_db_path = vector_db_path
         self.collection_name = collection_name
         self.top_k = top_k
@@ -30,10 +36,31 @@ class RAGPipeline:
 
         # Embedding model
         self.embedding_model = SentenceTransformer(model_name)
-        self.client = chromadb.PersistentClient(path=vector_db_path)
-        self.collection = self.client.get_collection(collection_name)
 
-        # BM25
+        try:
+            self.client = chromadb.PersistentClient(path=vector_db_path)
+            print(f"Connected to ChromaDB at: {vector_db_path}")
+
+            # Check if collection exists first
+            existing_collections = self.client.list_collections()
+            collection_names = [c.name for c in existing_collections]
+            print(f"Available collections: {collection_names}")
+
+            if collection_name not in collection_names:
+                print(f"❌ Collection '{collection_name}' does NOT exist. Creating it now...")
+                self.collection = self.client.create_collection(
+                    name=collection_name,
+                    # Optional: add metadata or hnsw config if needed
+                )
+            else:
+                self.collection = self.client.get_collection(name=collection_name)
+                print(f"✅ Loaded existing collection '{collection_name}' with {self.collection.count()} items")
+
+        except Exception as e:
+            print(f"❌ ChromaDB init failed: {type(e).__name__}: {str(e)}")
+            raise  # re-raise so you see full traceback in app.py
+
+        # BM25 init (now safe since collection exists)
         self.bm25 = None
         self.all_docs = []
         self._initialize_bm25()
@@ -41,13 +68,13 @@ class RAGPipeline:
 
     def _initialize_bm25(self):
         try:
-            all_results = self.collection.get(include=['documents', 'metadatas'])
-            if all_results['documents']:
-                self.all_docs = all_results['documents']
-                tokenized_docs = [doc.lower().split() for doc in self.all_docs]
-                self.bm25 = BM25Okapi(tokenized_docs)
+                all_results = self.collection.get(include=['documents', 'metadatas'])
+                if all_results['documents']:
+                    self.all_docs = all_results['documents']
+                    tokenized_docs = [doc.lower().split() for doc in self.all_docs]
+                    self.bm25 = BM25Okapi(tokenized_docs)
         except Exception as e:
-            print(f"⚠️ BM25 init error: {e}")
+                print(f"⚠️ BM25 init error: {e}")
 
     def _semantic_retrieve(self, query: str, k: int) -> List[RetrievedChunk]:
         query_emb = self.embedding_model.encode([query])
@@ -119,7 +146,7 @@ Question:
 """
         try:
             resp = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model=model,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.2
             )
