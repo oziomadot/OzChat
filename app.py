@@ -24,9 +24,28 @@ load_dotenv()
 
 
 
-client = OpenAI(
-    base_url="https://openrouter.ai/api/v1",
-    api_key=os.environ.get("OPEN_ROUTER"))
+# Global client - lazy init
+_openai_client = None
+
+def get_client():
+    global _openai_client
+    if _openai_client is None:
+        api_key = os.environ.get("OPEN_ROUTER") or os.environ.get("OPENAI_API_KEY")
+        base_url = os.environ.get("OPENAI_BASE_URL", "https://openrouter.ai/api/v1")
+        
+        if not api_key:
+            print("⚠️  No API key found - LLM features disabled")
+            _openai_client = None  # or mock client for testing
+        else:
+            _openai_client = OpenAI(api_key=api_key, base_url=base_url)
+    
+    return _openai_client
+
+# Then in generate_response / format_humanistic_response:
+client = get_client()
+if client is None:
+    return "LLM unavailable in this environment"
+# else proceed with client.chat.completions.create(...)
 
 model="openrouter/free"
 
