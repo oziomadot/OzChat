@@ -10,7 +10,6 @@ import os
 import traceback
 from datetime import datetime
 from rag_pipeline import RAGPipeline
-from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 from openai import OpenAI
 import os
@@ -69,7 +68,6 @@ Question:
 Answer:
 """
 
-prompt_template = ChatPromptTemplate.from_template(prompt)
 rag_pipeline = None
 
 def get_rag_pipeline():
