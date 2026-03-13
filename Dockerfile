@@ -10,10 +10,13 @@ COPY requirements.txt .
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . .
+# Copy only necessary application files
+COPY app.py .
+COPY rag_pipeline.py .
+COPY ingestion.py .
+COPY policy_corpus/ ./policy_corpus/
 
-# Create vector db directory if it doesn't exist
+# Create vector db directory (empty - will be populated at runtime)
 RUN mkdir -p nsr_vector_db
 
 # Expose port
@@ -23,5 +26,5 @@ EXPOSE 5000
 ENV PYTHONUNBUFFERED=1
 ENV PORT=5000
 
-# Run the application
-CMD ["python", "app.py"]
+# Run ingestion first, then start the app
+CMD ["sh", "-c", "python ingestion.py && python app.py"]

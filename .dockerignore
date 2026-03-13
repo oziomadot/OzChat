@@ -1,0 +1,48 @@
+# Vector database (very large)
+nsr_vector_db/
+
+# Git
+.git
+.gitignore
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Test files
+test_*.py
+
+# Logs
+*.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+
+# Documentation
+README.md
+*.md
+
+# Additional development files
+requirements_clean.txt
+rag_integration_guide.py
+rag_pipeline_ensemble.py
