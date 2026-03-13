@@ -37,15 +37,10 @@ def get_client():
             print("⚠️  No API key found - LLM features disabled")
             _openai_client = None  # or mock client for testing
         else:
-            _openai_client = OpenAI(api_key=api_key, base_url=base_url)
+            _openai_client = OpenAI(api_key=api_key, base_url=base_url, organization=os.environ.get("OPENAI_ORG_ID"))
     
     return _openai_client
 
-# Then in generate_response / format_humanistic_response:
-client = get_client()
-if client is None:
-    return "LLM unavailable in this environment"
-# else proceed with client.chat.completions.create(...)
 
 model="openrouter/free"
 
@@ -128,15 +123,13 @@ def get_rag_pipeline():
 #     if "recommendation" in q or "algorithm" in q:
 #         if "recommendation" in c:
 #             return ("Our recommendation system uses hybrid filtering based on location, budget, "
-#                     "and preferences, audited for fairness.")
-    
-#     return ("Based on available information, I can help with NSR policies covering data privacy, "
-#             "booking, security, and recommendation guidelines. Which area would you like to know more about?")
-
-
 def format_humanistic_response(question, retrieved_chunks):
     if not retrieved_chunks:
         return "No info available."
+
+    client = get_client()
+    if client is None:
+        return "LLM unavailable in this environment"
 
     context = "\n\n".join(chunk['content'] for chunk in retrieved_chunks)
 

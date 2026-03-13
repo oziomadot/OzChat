@@ -38,3 +38,14 @@ jobs:
           print('✅ RAG pipeline can be imported')
           print('All checks passed - app is ready!')
           "
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Railway Deploy
+        run: |
+          echo "Deployment triggered via GitHub → Railway (auto-deploy enabled)"
+          # Railway auto-deploys when CI passes (enable "Wait for CI" in Railway dashboard)
+
+          

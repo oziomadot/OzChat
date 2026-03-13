@@ -11,7 +11,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 import os
 
 load_dotenv()
-# client = OpenAI()  # Make sure OPENAI_API_KEY is set in your environment
 # Global client - lazy init
 _openai_client = None
 
@@ -28,12 +27,6 @@ def get_client():
             _openai_client = OpenAI(api_key=api_key, base_url=base_url)
     
     return _openai_client
-
-# Then in generate_response / format_humanistic_response:
-client = get_client()
-if client is None:
-    return "LLM unavailable in this environment"
-# else proceed with client.chat.completions.create(...)
 
 model="openrouter/free"
 
@@ -163,6 +156,9 @@ Context:
 Question:
 {query}
 """
+        client = get_client()
+        if client is None:
+            return "LLM unavailable in this environment"
         try:
             resp = client.chat.completions.create(
                 model=model,
