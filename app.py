@@ -9,7 +9,7 @@ from flask_cors import CORS
 import os
 import traceback
 from datetime import datetime
-from rag_pipeline import RAGPipeline
+from rag_pipeline_lite import RAGPipelineLite as RAGPipeline
 from dotenv import load_dotenv
 from openai import OpenAI
 import os

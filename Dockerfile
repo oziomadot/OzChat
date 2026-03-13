@@ -2,7 +2,7 @@
 FROM python:3.11-slim as builder
 
 WORKDIR /app
-COPY requirements-optimized.txt requirements.txt
+COPY requirements-minimal.txt requirements.txt
 
 # Install dependencies with optimizations
 RUN pip install --no-cache-dir --upgrade pip setuptools wheel && \
@@ -19,8 +19,8 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy only necessary application files
 COPY app.py .
-COPY rag_pipeline.py .
-COPY ingestion.py .
+COPY rag_pipeline_lite.py .
+COPY ingestion_lite.py ingestion.py
 COPY policy_corpus/ ./policy_corpus/
 
 # Create vector db directory (empty - will be populated at runtime)

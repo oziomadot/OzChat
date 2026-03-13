@@ -1,0 +1,22 @@
+# Core web framework
+flask>=3.0.0
+flask-cors>=5.0.0
+python-dotenv>=1.0.0
+
+# LLM client (includes embeddings)
+openai>=1.0.0
+
+# Vector database - minimal version
+chromadb>=0.4.0,<0.6.0
+
+# BM25 search (lightweight)
+rank-bm25>=0.2.2
+
+# Basic numerical operations
+numpy>=1.24.0,<1.26.0
+
+# Web server
+waitress>=3.0.0
+
+# PDF processing - minimal
+pypdf>=3.0.0,<5.0.0
