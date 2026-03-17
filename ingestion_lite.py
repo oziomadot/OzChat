@@ -70,7 +70,7 @@ def main():
     print(f"Created {len(chunks)} chunks")
     
     # Generate embeddings using OpenAI API
-    print("🔢 Generating embeddings (using OpenAI API)...")
+    print("🔢 Generating embeddings (using OpenAI API - 1536 dimensions)...")
     embeddings = []
     for i, chunk in enumerate(chunks):
         if i % 10 == 0:
@@ -78,12 +78,17 @@ def main():
         
         try:
             embedding = rag._get_openai_embedding(chunk)
+            print(f"Chunk {i+1} embedding dimension: {len(embedding)}")
             embeddings.append(embedding)
         except Exception as e:
             print(f"Error generating embedding for chunk {i}: {e}")
             # Use fallback embedding
-            embedding = rag._get_openai_embedding(chunk)  # This will use the fallback
+            embedding = rag._get_openai_embedding(chunk)  # This will use fallback
             embeddings.append(embedding)
+    
+    print(f"Total embeddings generated: {len(embeddings)}")
+    if embeddings:
+        print(f"Embedding dimensions: {len(embeddings[0])}")
     
     # Add to ChromaDB
     print("💾 Storing in ChromaDB...")

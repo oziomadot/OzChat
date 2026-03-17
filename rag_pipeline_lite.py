@@ -105,34 +105,37 @@ class RAGPipelineLite:
         """Get embedding from OpenAI API instead of local model"""
         client = get_client()
         if client is None:
-            # Fallback to simple TF-IDF style embedding
+            # Fallback to simple TF-IDF style embedding (1536 dimensions)
             words = text.lower().split()
-            # Create simple frequency-based embedding
+            # Create simple frequency-based embedding with fixed 1536 dimensions
             vocab = set(words)
-            embedding = [words.count(word) / len(words) for word in sorted(vocab)]
-            # Pad/truncate to fixed size
-            if len(embedding) < 384:
-                embedding.extend([0.0] * (384 - len(embedding)))
-            else:
-                embedding = embedding[:384]
+            embedding = []
+            for i in range(1536):
+                if i < len(vocab):
+                    word = sorted(vocab)[i]
+                    embedding.append(words.count(word) / len(words))
+                else:
+                    embedding.append(0.0)
             return embedding
         
         try:
             response = client.embeddings.create(
-                model="text-embedding-ada-002",  # or "text-embedding-3-small" for smaller
+                model="text-embedding-ada-002",  # 1536 dimensions
                 input=text
             )
             return response.data[0].embedding
         except Exception as e:
             print(f"⚠️ OpenAI embedding error: {e}")
-            # Fallback to simple embedding
+            # Fallback to simple embedding (1536 dimensions)
             words = text.lower().split()
             vocab = set(words)
-            embedding = [words.count(word) / len(words) for word in sorted(vocab)]
-            if len(embedding) < 384:
-                embedding.extend([0.0] * (384 - len(embedding)))
-            else:
-                embedding = embedding[:384]
+            embedding = []
+            for i in range(1536):
+                if i < len(vocab):
+                    word = sorted(vocab)[i]
+                    embedding.append(words.count(word) / len(words))
+                else:
+                    embedding.append(0.0)
             return embedding
 
     def _semantic_retrieve(self, query: str, k: int) -> List[RetrievedChunk]:
