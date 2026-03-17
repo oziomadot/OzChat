@@ -6,12 +6,30 @@ from dataclasses import dataclass
 from dotenv import load_dotenv
 from rank_bm25 import BM25Okapi
 from openai import OpenAI
-from sklearn.metrics.pairwise import cosine_similarity
 import os
 
 load_dotenv()
 # Global client - lazy init
 _openai_client = None
+
+def cosine_similarity_simple(a, b):
+    """Pure Python cosine similarity to avoid sklearn dependency"""
+    a = np.array(a)
+    b = np.array(b)
+    if a.ndim == 1:
+        a = a.reshape(1, -1)
+    if b.ndim == 1:
+        b = b.reshape(1, -1)
+    
+    dot_product = np.dot(a, b.T)
+    norm_a = np.linalg.norm(a, axis=1)
+    norm_b = np.linalg.norm(b, axis=1)
+    
+    # Avoid division by zero
+    norm_a = np.where(norm_a == 0, 1, norm_a)
+    norm_b = np.where(norm_b == 0, 1, norm_b)
+    
+    return dot_product / (norm_a[:, np.newaxis] * norm_b)
 
 def get_client():
     global _openai_client
@@ -164,7 +182,7 @@ class RAGPipelineLite:
             return chunks
         query_emb = [self._get_openai_embedding(query)]
         doc_embs = [self._get_openai_embedding(c.content) for c in chunks]
-        sims = cosine_similarity(query_emb, doc_embs)[0]
+        sims = cosine_similarity_simple(query_emb, doc_embs)[0]
         for i, c in enumerate(chunks):
             c.similarity_score = float(sims[i])
         return sorted(chunks, key=lambda x: x.similarity_score, reverse=True)
