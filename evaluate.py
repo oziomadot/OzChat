@@ -2,6 +2,7 @@ import time
 import csv
 import requests
 from statistics import median, quantiles
+import pandas as pd
 
 # Change this to your deployed Render URL or local URL
 BASE_URL = "https://ozchat-x5d3.onrender.com"   # ← UPDATE THIS
@@ -15,60 +16,66 @@ def evaluate():
         
         for row in reader:
             question = row["question"]
-            start = time.perf_counter()
+            print(f"\nEvaluating: {question}")
             
-            try:
-                resp = requests.post(f"{BASE_URL}/chat", json={"question": question}, timeout=60)
-                end = time.perf_counter()
+            overall_start = time.perf_counter()
+            
+            # ── Measure retrieval ───────────────────────────────
+            retrieve_start = time.perf_counter()
+            # If you can call retrieval separately – do it here
+            # Otherwise approximate by first part of /chat response
+            retrieve_time = 0  # placeholder – improve if possible
+            
+            # ── Full API call ────────────────────────────────────
+            resp_start = time.perf_counter()
+            resp = requests.post(
+                f"{BASE_URL}/chat",
+                json={"question": question},
+                timeout=60
+            )
+            resp_end = time.perf_counter()
+            
+            api_latency_ms = (resp_end - resp_start) * 1000
+            
+            overall_end = time.perf_counter()
+            total_latency_ms = (overall_end - overall_start) * 1000
+            
+            if resp.status_code != 200:
+                print(f"  → ERROR {resp.status_code}")
+                continue
                 
-                latency = (end - start) * 1000  # ms
-                latencies.append(latency)
-                
-                data = resp.json()
-                answer = data.get("answer", "")
-                citations = data.get("citations", [])
-                
-                results.append({
-                    "question": question,
-                    "answer": answer,
-                    "citations": citations,
-                    "latency_ms": round(latency, 1),
-                    "raw_response": data
-                })
-                
-                print(f" {question[:60]:60} | {latency:6.1f}ms")
-                
-            except requests.exceptions.Timeout:
-                print(f"  TIMEOUT: {question[:60]:60}")
-                results.append({
-                    "question": question,
-                    "answer": "REQUEST TIMEOUT",
-                    "citations": [],
-                    "latency_ms": 60000,
-                    "error": "timeout"
-                })
-            except Exception as e:
-                print(f" ERROR: {question[:60]:60} | {str(e)}")
-                results.append({
-                    "question": question,
-                    "answer": f"ERROR: {str(e)}",
-                    "citations": [],
-                    "latency_ms": 0,
-                    "error": str(e)
-                })
+            data = resp.json()
+            answer = data.get("answer", "")
+            citations = data.get("citations", [])
+            num_chunks = data.get("num_chunks_retrieved", 0)
+            
+            results.append({
+                "question": question,
+                "answer_snippet": answer[:120] + "..." if len(answer) > 120 else answer,
+                "num_chunks": num_chunks,
+                "api_latency_ms": round(api_latency_ms, 1),
+                "total_latency_ms": round(total_latency_ms, 1),
+                "citations_count": len(citations)
+            })
+            
+            print(f"  → API call: {api_latency_ms:6.1f} ms")
+            print(f"  → Total:    {total_latency_ms:6.1f} ms")
+            print(f"  → Chunks:   {num_chunks:2d} | Citations: {len(citations)}")
     
-    # Calculate metrics (only successful requests)
-    successful_latencies = [r["latency_ms"] for r in results if "error" not in r]
-    if successful_latencies:
-        p50 = median(successful_latencies)
-        p95 = quantiles(successful_latencies, n=20)[18] if len(successful_latencies) >= 20 else max(successful_latencies)
-    else:
-        p50 = p95 = 0
-    
-    print("\n=== EVALUATION RESULTS ===")
-    print(f"Total questions: {len(results)}")
-    print(f"Successful: {len(successful_latencies)}")
-    print(f"Latency → p50: {p50:.1f}ms | p95: {p95:.1f}ms")
+    # Summary statistics
+    if results:
+        all_total = [r["total_latency_ms"] for r in results]
+        p50 = median(all_total)
+        p95 = quantiles(all_total, n=20)[18] if len(all_total) >= 20 else max(all_total)
+        
+        print("\n" + "="*40)
+        print(f"Evaluation complete – {len(results)} queries")
+        print(f"p50 latency: {p50:6.1f} ms")
+        print(f"p95 latency: {p95:6.1f} ms")
+        
+        # Save detailed results
+        pd.DataFrame(results).to_csv("evaluation_results_detailed.csv", index=False)
+        print("Detailed results saved to evaluation_results_detailed.csv")
     
     return results
 

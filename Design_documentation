@@ -1,0 +1,77 @@
+Design Documentation – Key Choices & Justifications
+1. Embedding Model: all-MiniLM-L6-v2 (sentence-transformers)
+
+Choice justification:
+Very fast inference (~20–80 ms per chunk on CPU) → critical for low-latency on Render free tier
+384-dimensional embeddings → good balance between quality and storage/indexing cost in Chroma
+Strong performance on semantic similarity for English policy text (trained on large paraphrase datasets)
+Open-source, no API calls → zero cost & no external dependency
+
+Alternatives considered:
+Larger models (e.g. all-mpnet-base-v2, e5-large) → better accuracy but 3–10× slower & more memory
+OpenAI text-embedding-3-small → higher quality but costs money + adds latency/network round-trip
+
+
+2. Chunking Strategy
+
+Choice: Simple fixed-size chunking (~600–800 characters) with ~100–150 character overlap
+Justification:
+Policy documents are mostly structured text (sections, bullet points, short paragraphs) → fixed-size works well without complex semantic splitting
+Overlap ensures context continuity across chunk boundaries (important for sentences split by chunk edge)
+Keeps average chunk count low (16 items in your DB) → fast retrieval even with top_k=20
+
+Alternatives considered:
+RecursiveCharacterTextSplitter (LangChain) → more natural but slower & more complex for small corpus
+Sentence-based splitting → risk of very short chunks in bullet-heavy policies
+
+
+3. Retrieval Parameter: top_k = 20 (with optional reranking)
+
+Choice justification:
+20 provides enough candidates to capture relevant passages even with noisy queries
+Still small enough to keep context under typical LLM token limits (~8k–16k tokens with free models)
+Reranking enabled by default (cosine similarity re-sort) → improves precision without huge cost
+
+Trade-off:
+Higher k → better recall, but increases context length → slower LLM generation & higher cost on paid models
+Lower k (8–12) → faster, but risk of missing key passages → used in low-latency ablation
+
+
+4. Prompt Format
+
+Choice: Strict instruction prompt with explicit rulestextYou are the NSR Policy Assistant. Answer the user question using ONLY the context below. 
+Be clear, professional, and friendly.
+- If the answer is not in the context, say "I could not find relevant information."
+- Do not invent or assume information.
+- Reference document names when possible.
+
+Context:
+{context}
+
+Question:
+{query}
+Justification:
+"ONLY the context" + "Do not invent" → maximizes groundedness (your eval showed 100%)
+"Be clear, professional, and friendly" → matches corporate policy tone
+Explicit fallback instruction → prevents hallucinations when no relevant chunks are found
+Simple structure → works reliably even with weaker free models
+
+
+5. Vector Store: Chroma (persistent on disk)
+
+Choice justification:
+Lightweight, fully local (no external service) → zero cost & fast startup
+PersistentClient with disk storage → survives Render redeploys (via attached volume)
+Supports metadata filtering & simple HNSW indexing → sufficient for small corpus (~16 items)
+Easy Python API → minimal code overhead
+
+Alternatives considered:
+Pinecone / Weaviate → managed but requires API key + free tier limits
+FAISS → faster pure in-memory but no persistence out of the box
+
+
+Summary of Design Philosophy
+
+Priorities: High groundedness & citation accuracy (achieved 100% in eval) + zero external LLM/embedding cost + reasonable speed on free hosting
+Trade-offs accepted: Higher latency (cold starts + free LLM) in exchange for zero running cost & perfect faithfulness
+Future improvements: Faster hosting (Railway/Railway hobby), quantized embeddings, or local LLM (Ollama) if moving off Render
