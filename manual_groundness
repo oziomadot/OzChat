@@ -1,0 +1,69 @@
+Questions:
+Can I carry over unused PTO to next year?
+score:1
+
+Questions:
+What is the policy for sick leave?
+score:1
+
+Questions:
+How do I request time off?
+score:1
+
+Questions:
+What equipment does the company provide for remote work?
+score:1
+
+Questions:
+What are the process of onboarding?
+score:1
+
+Questions:
+Do you refund Customers?
+score:1
+
+Questions:
+Do you have a customer support team?
+score:1
+
+Questions:
+How do you handle fraud?
+score:1
+
+Questions:
+If i want to book accomodation, how do i do that?
+score:1
+
+Questions:
+How do you handle information security?
+score:1
+
+Questions:
+can everybody work in NaijaStay?
+score:1
+
+Questions:
+What is NSR stand in regards to nigeria diverse culture?
+score:1
+
+Questions:
+What is the process for reporting harassment?
+score:1
+
+Questions:
+How does NSR recommend accommodations to customers?
+score:1
+
+Questions:
+What is the process for booking a hotel?
+score:1
+
+
+Groundedness % = (number of fully grounded answers / total) × 100
+
+Groundedness % = (15/15) × 100 = 100%
+
+Citation Accuracy % = (correct citations / total answers with citations) × 100
+
+Citation Accuracy % = (15/15) × 100 = 100%
+

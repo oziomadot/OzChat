@@ -56,7 +56,7 @@ class RetrievedChunk:
 
 class RAGPipelineLite:
     def __init__(self, vector_db_path="./nsr_vector_db", collection_name="nsr_policies",
-                top_k=20, enable_reranking=True, use_ensemble=True):
+                top_k=10, enable_reranking=False, use_ensemble=True):
         self.vector_db_path = vector_db_path
         self.collection_name = collection_name
         self.top_k = top_k

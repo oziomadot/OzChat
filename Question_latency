@@ -1,0 +1,29 @@
+What is the company policy on PTO accrual?                   | 13429.6ms
+ Can I work remotely from another country?                    | 16220.7ms
+ What is the expense reimbursement process?                   | 11166.8ms
+ question                                                     | 24869.3ms
+ How many days of PTO do new employees get per year?          | 12407.9ms
+ When does PTO start accruing?                                | 13023.9ms
+ Can I carry over unused PTO to next year?                    | 10800.9ms
+ What is the policy for sick leave?                           | 16973.7ms
+ How do I request time off?                                   | 15504.4ms
+ Is remote work allowed? From where?                          | 13138.4ms
+ Do I need approval for remote work?                          | 15383.4ms
+ What equipment does the company provide for remote work?     | 6928.9ms
+ Can I expense internet bills while working remotely?         | 14212.3ms
+ What is the maximum daily meal allowance?                    | 10909.5ms
+ How long do I have to submit expense claims?                 | 11692.7ms
+ Is there a company credit card?                              | 28464.1ms
+ What are the office security protocols?                      | 10234.0ms
+ Do I need to use VPN when working remotely?                  | 19333.9ms
+ What is the password policy?                                 | 16566.1ms
+ Are public holidays paid? Which ones?                        | 13356.7ms
+ Is Dec 25th a public holiday?                                | 12069.1ms
+ What happens if a holiday falls on a weekend?                | 19636.9ms
+ Can I take unpaid leave?                                     | 15564.1ms
+ What is the notice period for resignation?                   | 13420.2ms
+
+=== EVALUATION RESULTS ===
+Total questions: 24
+Successful: 24
+Latency → p50: 13424.9ms | p95: 27565.4ms

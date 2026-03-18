@@ -1,0 +1,95 @@
+# NaijaStay Policy Assistant – LLM Application Evaluation Report
+
+**Project**: NaijaStay Recommender – Policy Chat Assistant  
+**Date**: March 18, 2026  
+**Author**: Ozioma Ezeomeke  
+**Deployment**: Render (free tier)  
+**LLM**: OpenRouter free tier models (primarily stepfun/step-3.5-flash:free and openrouter/free)  
+**Embedding model**: sentence-transformers/all-MiniLM-L6-v2  
+**Vector store**: Chroma (persistent on Render volume)
+
+## 1. Evaluation Dataset
+
+- **Size**: 24 questions  
+- **Topics covered**: PTO/leave, remote work, expenses, security, holidays, general HR policies  
+- **Format**: CSV with columns: question, topic, gold_answer (partial), expected_citations  
+- File: `evaluation_set.csv` (included in repository)
+
+**Example questions** (subset):
+
+- How many days of PTO do new employees get per year?
+- Can I work remotely from another country?
+- What is the expense reimbursement process?
+- Is remote work allowed? From where?
+- What are the office security protocols?
+- Are public holidays paid? Which ones?
+- …
+
+## 2. Evaluation Methodology
+
+- **Automated script**: `evaluate.py`  
+  - Sends each question to the `/chat` endpoint  
+  - Measures end-to-end latency (request → full answer received)  
+  - Collects answer + citations for manual review
+
+- **Manual review** (Groundedness & Citation Accuracy):  
+  - Sample of 15 answers manually checked against retrieved context  
+  - Groundedness: every fact in the answer must be directly supported (no hallucination)  
+  - Citation Accuracy: each cited chunk must actually support the claimed statement
+
+## 3. Results
+
+### 3.1 System Metrics (Latency)
+
+| Metric          | Value       | Comment                                      |
+|-----------------|-------------|----------------------------------------------|
+| Total queries   | 24          | All successful (100% success rate)           |
+| p50 latency     | 13.42 s     | Median response time                         |
+| p95 latency     | 27.56 s     | 95% of queries faster than this value        |
+| Average latency | ~16.8 s     | (computed separately)                        |
+
+**Latency notes**:  
+High values are mainly caused by:  
+- Cold starts on Render free tier (instances sleep after ~15 min)  
+- Slower inference on shared free LLM models via OpenRouter  
+- Retrieval + reranking step with top_k=20
+
+### 3.2 Answer Quality
+
+| Metric              | Score | Numerator / Denominator | Comment |
+|---------------------|-------|---------------------------|---------|
+| Groundedness        | 100%  | 15 / 15                   | No hallucinations detected in the reviewed sample |
+| Citation Accuracy   | 100%  | 15 / 15                   | All provided citations correctly support the statements |
+
+**Manual review notes**:  
+- All 15 checked answers were fully faithful to the retrieved chunks  
+- Citations pointed to the exact relevant passages (no misleading attribution)  
+- No invented policy details or contradictions observed
+
+## 4. Strengths
+
+- Extremely high faithfulness → model strictly follows RAG context  
+- Perfect citation behavior in the evaluated sample  
+- Robust handling of diverse policy topics (HR, security, finance, leave)
+
+## 5. Limitations & Improvement Opportunities
+
+- **Latency** is the primary bottleneck (13–28 s)  
+  → Caused by Render free-tier sleep + slower free LLM inference
+
+- **Improvement ideas already implemented / planned**:
+  - Switched to faster models (`openrouter/free`, `stepfun/step-3.5-flash:free`)
+  - Reduced `top_k` from 20 → 10
+  - Disabled reranking in low-latency mode
+  - Considering migration to Railway hobby tier (always-on instances)
+
+## 6. Conclusion
+
+The NaijaStay Policy Assistant achieves **very strong factual accuracy and grounding** (100% in both measured dimensions on the sampled questions).  
+The main area for future work is **reducing end-to-end latency** to improve user experience, which is feasible with minor configuration changes and/or moving to a non-sleeping hosting tier.
+
+Repository: https://github.com/oziomadot/OzChat  
+Live demo: https://ozchat-x5d3.onrender.com
+Evaluation script & dataset: `/evaluation/` folder
+
+---

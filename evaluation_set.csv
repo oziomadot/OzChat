@@ -1,0 +1,25 @@
+question,topic,gold_answer,expected_citations
+What is the company policy on PTO accrual?,PTO,"Employees accrue 1.5 days of PTO per month...",policy-pto-001.md
+Can I work remotely from another country?,Remote Work,"Remote work is allowed within Nigeria only...",remote-work-policy.md
+What is the expense reimbursement process?,Expense,"Submit receipts via the portal within 30 days...",expense-policy.pdf
+question,topic
+How many days of PTO do new employees get per year?,PTO
+When does PTO start accruing?,PTO
+Can I carry over unused PTO to next year?,PTO
+What is the policy for sick leave?,PTO
+How do I request time off?,PTO
+Is remote work allowed? From where?,Remote Work
+Do I need approval for remote work?,Remote Work
+What equipment does the company provide for remote work?,Remote Work
+Can I expense internet bills while working remotely?,Expense
+What is the maximum daily meal allowance?,Expense
+How long do I have to submit expense claims?,Expense
+Is there a company credit card?,Expense
+What are the office security protocols?,Security
+Do I need to use VPN when working remotely?,Security
+What is the password policy?,Security
+Are public holidays paid? Which ones?,Holidays
+Is Dec 25th a public holiday?,Holidays
+What happens if a holiday falls on a weekend?,Holidays
+Can I take unpaid leave?,Leave
+What is the notice period for resignation?,HR
